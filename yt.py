@@ -1,16 +1,25 @@
-import pafy
+# importing packages
+from pytube import YouTube
+import os
 
-url = "https://www.youtube.com/watch?v=eACohWVwTOc"
-video = pafy.new(url)
+# url input from user
+yt = YouTube(
+	str(input("Enter the URL of the video you want to download: \n>> ")))
 
-streams = video.streams
-for i in streams:
-	print(i)
-	
-# get best resolution regardless of format
-best = video.getbest()
+# extract only audio
+video = yt.streams.filter(only_audio=True).first()
 
-print(best.resolution, best.extension)
+# check for destination to save file
+print("Enter the destination (leave blank for current directory)")
+destination = str(input(">> ")) or '.'
 
-# Download the video
-best.download()
+# download the file
+out_file = video.download(output_path=destination)
+
+# save the file
+base, ext = os.path.splitext(out_file)
+new_file = base + '.mp3'
+os.rename(out_file, new_file)
+
+# result of success
+print(yt.title + " has been successfully downloaded.")
